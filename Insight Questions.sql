@@ -497,3 +497,36 @@ GROUP BY order_id
 
 26. Distribution of order sizes (small vs bulk orders)
 
+WITH order_size AS (
+	SELECT 
+		order_id,
+		SUM(quantity) AS total_qty
+	FROM order_details
+	GROUP BY order_id
+),
+avg_size AS(
+	SELECT
+		AVG(total_qty) AS avg_qty
+	FROM order_size
+)
+SELECT
+	CASE
+		WHEN (o.total_qty > a.avg_qty) THEN 'Bulk'
+		ELSE 'Small'
+	END AS order_type,
+	COUNT(*)
+FROM order_size o
+CROSS JOIN avg_size a
+GROUP BY order_type;
+
+
+26. High-value orders (top 10%)
+
+SELECT 
+	o.order_id,
+	SUM(od.unit_price * od.quantity * (1-od.discount)) AS total_revenue
+FROM orders o 
+JOIN order_details od ON o.order_id = od.order_id
+GROUP BY o.order_id
+
+
