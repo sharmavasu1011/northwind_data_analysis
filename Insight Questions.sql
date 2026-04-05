@@ -495,7 +495,7 @@ GROUP BY order_id
 )t;
 
 
-26. Distribution of order sizes (small vs bulk orders)
+27. Distribution of order sizes (small vs bulk orders)
 
 WITH order_size AS (
 	SELECT 
@@ -520,13 +520,38 @@ CROSS JOIN avg_size a
 GROUP BY order_type;
 
 
-26. High-value orders (top 10%)
+28. High-value orders (top 10%)
 
-SELECT 
-	o.order_id,
+WITH order_revenue AS (
+	SELECT
+		o.order_id,
+		SUM(od.unit_price * od.quantity * (1-od.discount)) AS total_revenue
+	FROM order_details od 
+	JOIN orders o ON o.order_id = od.order_id
+	GROUP BY o.order_id
+)
+SELECT
+	*
+FROM order_revenue
+ORDER BY total_revenue DESC
+LIMIT (	
+	SELECT 
+		COUNT(*) * 0.10 FROM order_revenue);
+
+
+29. How discounts affect: 
+•	Quantity sold 
+•	Revenue 
+
+SELECT
+	CASE
+		WHEN od.discount = 0 THEN 'No Discount'
+		WHEN od.discount <= 0.10 THEN 'Low'
+		WHEN od.discount <= 0.20 THEN 'Medium'
+		ELSE 'High'
+	END AS discount_group,
+	SUM(od.quantity) AS total_qty,
 	SUM(od.unit_price * od.quantity * (1-od.discount)) AS total_revenue
-FROM orders o 
-JOIN order_details od ON o.order_id = od.order_id
-GROUP BY o.order_id
-
+FROM order_details od
+GROUP BY discount_group;
 
