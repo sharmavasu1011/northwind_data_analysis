@@ -70,12 +70,13 @@ ORDER BY year;
 
 7. Growth % of each year
 
-WITH yearly_sales AS(SELECT
-	EXTRACT(YEAR FROM o.order_date) AS year,
-	SUM(od.unit_price * od.quantity * (1-od.discount)) AS total_sales
-FROM orders o
-JOIN order_details od ON o.order_id = od.order_id
-GROUP BY year)
+WITH yearly_sales AS(
+	SELECT
+		EXTRACT(YEAR FROM o.order_date) AS year,
+		SUM(od.unit_price * od.quantity * (1-od.discount)) AS total_sales
+	FROM orders o
+	JOIN order_details od ON o.order_id = od.order_id
+	GROUP BY year)
 SELECT
 	year,
 	total_Sales,
@@ -555,3 +556,59 @@ SELECT
 FROM order_details od
 GROUP BY discount_group;
 
+
+30. Are discounts actually increasing sales or just reducing profit?
+
+SELECT
+	CASE
+		WHEN od.discount = 0 THEN 'No Discount'
+		ELSE 'Discounted'
+	END AS discount_group,
+	SUM(od.quantity) AS total_qty,
+	SUM(od.unit_price * od.quantity * (1-discount)) AS total_revenue,
+	SUM(od.unit_price * od.quantity * (1-discount))/SUM(od.quantity) AS revenue_per_unit 
+FROM order_details od 
+GROUP BY discount_group;
+
+
+31. Revenue with vs without discount 
+
+SELECT 
+	SUM(unit_price * quantity) AS without_discount,
+	SUM(unit_price * quantity * (1-discount)) AS with_discount,
+	SUM(unit_price * quantity) - SUM(unit_price * quantity * (1-discount)) AS revenue_lost
+FROM order_details;
+
+
+30. Contribution of top 20% customers (Pareto analysis)
+
+WITH customer_revenue AS(
+	SELECT
+		c.customer_id,
+		c.contact_name,
+		SUM(od.unit_price * od.quantity * (1-od.discount)) AS total_revenue
+	FROM customers c
+	JOIN orders o ON c.customer_id = o.customer_id
+	JOIN order_details od ON o.order_id = od.order_id
+	GROUP BY c.customer_id, c.contact_name
+),
+top_customers AS(
+	SELECT 
+		*
+	FROM customer_revenue
+	ORDER BY total_revenue DESC
+	LIMIT(
+		SELECT FLOOR(COUNT(*)) * 0.2
+		FROM customer_revenue)
+),
+total_sales AS(
+	SELECT 
+		SUM(total_revenue) AS overall_revenue
+	FROM customer_revenue
+)
+SELECT
+	SUM(tc.total_revenue)AS top_20_revenue,
+	MAX(ts.overall_revenue) AS total_revenue,
+	SUM(tc.total_revenue) * 100 / MAX(ts.overall_revenue) AS contribution_pct
+FROM top_customers tc
+CROSS JOIN total_sales ts;
