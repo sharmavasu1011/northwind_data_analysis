@@ -612,3 +612,5 @@ SELECT
 	SUM(tc.total_revenue) * 100 / MAX(ts.overall_revenue) AS contribution_pct
 FROM top_customers tc
 CROSS JOIN total_sales ts;
+
+
