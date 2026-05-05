@@ -73,6 +73,37 @@ FROM customer_order
 GROUP BY customer_type;
 
 
+--contribution of top 10% customers
+
+WITH customer_sales AS(
+	SELECT
+		c.customer_id,
+		c.company_name,
+		SUM(od.unit_price * od.quantity * (1-od.discount)) AS total_revenue
+	FROM customers c
+	JOIN orders o ON c.customer_id = o.customer_id
+	JOIN order_details od ON o.order_id = od.order_id
+	GROUP BY c.customer_id, c.company_name
+),
+ranked_customer AS(
+	SELECT
+		*,
+		ROW_NUMBER() OVER(ORDER BY total_revenue DESC) AS rnk,
+		COUNT(*) OVER() AS total_customers
+	FROM customer_sales
+),
+top_10_percent AS(
+	SELECT
+		*
+	FROM ranked_customer
+	WHERE rnk <= total_customers * 0.1
+)
+SELECT
+	SUM(total_revenue) *100 /
+	(SELECT SUM(total_revenue) FROM customer_sales) AS contribution_percentage
+FROM top_10_percent;
+
+
 -- ================================================
 -- SECTION 2: PRODUCT ANALYSIS
 -- ================================================
