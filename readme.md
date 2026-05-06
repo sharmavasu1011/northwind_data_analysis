@@ -37,7 +37,8 @@ Analysis & Insights
 - Product demand varies across countries, indicating region-specific preferences
 
 Dashboard
-![Dashboard](dashboard.png)
+
+Dashboard.png
 
 The Excel dashboard provides an interactive overview of:
 - Total orders and total revenue 
