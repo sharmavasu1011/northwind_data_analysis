@@ -38,7 +38,7 @@ Analysis & Insights
 
 Dashboard
 
-Dashboard.png
+![Dashboard](Dashboard.png)
 
 The Excel dashboard provides an interactive overview of:
 - Total orders and total revenue 
