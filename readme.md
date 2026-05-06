@@ -19,13 +19,13 @@ Data Cleaning
 
 Analysis & Insights
 # customer analysis
-- A small group of customers contributes a significant portion of total revenue, indicating high customer concentration 
+- Top 10% of customers contributes approximately 40% of total revenue, indicating high customer concentration 
 - Identified repeat vs one-time customers to understand retention patterns 
 
 # product analysis
 - Revenue is driven by a subset of high-performing products 
 - Identified premium and low-margin products to evaluate profitability 
-- Discounts contribute to noticeable revenue loss, indicating potential inefficiencies in pricing strategy 
+- Discounts contribute to $88,665.55 revenue loss, indicating potential inefficiencies in pricing strategy 
 
 # Shipping & Operations
 - Orders were categorized into timely, delayed, and not shipped to evaluate operational #performance 
