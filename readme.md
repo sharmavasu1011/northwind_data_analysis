@@ -37,7 +37,8 @@ Analysis & Insights
 - Product demand varies across countries, indicating region-specific preferences
 
 Dashboard
- 
+![Dashboard](dashboard.png)
+
 The Excel dashboard provides an interactive overview of:
 - Total orders and total revenue 
 - Customer segmentation (one-time vs repeat customers) 
